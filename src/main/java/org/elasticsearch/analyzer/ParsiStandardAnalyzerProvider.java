@@ -13,7 +13,7 @@ public class ParsiStandardAnalyzerProvider extends AbstractIndexAnalyzerProvider
     private final ParsiStandardAnalyzer analyzer;
 
     public ParsiStandardAnalyzerProvider(IndexSettings indexSettings, Environment environment, String name, Settings settings) {
-        super(indexSettings, name, settings);
+        super(name, settings);
         analyzer = new ParsiStandardAnalyzer();
     }
 
