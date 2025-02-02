@@ -24,15 +24,23 @@ jobs:
     - name: Build with Maven
       run: mvn clean package
 
+    - name: Find the Generated ZIP File
+      run: |
+        ZIP_FILE=$(find target/releases/ -name "*.zip" | head -n 1)
+        echo "ZIP_FILE=$ZIP_FILE" >> $GITHUB_ENV
+        echo "ZIP_FILE_NAME=$(basename $ZIP_FILE)" >> $GITHUB_ENV
+
     - name: Create GitHub Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         TAG_NAME=v1.0.${{ github.run_number }}
-        gh release create $TAG_NAME target/releases/ParsiAnalyzer-1.0-SNAPSHOT.zip --title "Release $TAG_NAME" --notes "Automated release from GitHub Actions"
+        gh release create $TAG_NAME ${{ env.ZIP_FILE }} \
+          --title "Release $TAG_NAME" \
+          --notes "Automated release from GitHub Actions.\n\nGenerated ZIP file: **${{ env.ZIP_FILE_NAME }}**"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: parsi-analyzer-zip
-        path: target/releases/ParsiAnalyzer-1.0-SNAPSHOT.zip
+        path: ${{ env.ZIP_FILE }}
